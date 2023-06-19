@@ -1,0 +1,65 @@
+properties([
+        parameters([
+                [$class: 'CascadeChoiceParameter',
+                 choiceType: 'PT_CHECKBOX',
+                 description: '''[可选] 选择要操作的服务:\n- gateway/uc: 网关和用户\n -chain-monitor：交易监控''',
+                 filterLength: 1,
+                 filterable: false,
+                 name: 'COMPONT',
+                 referencedParameters: 'VERS',
+                 script: [
+                         $class: 'GroovyScript',
+                         fallbackScript: [
+                                 classpath: [],
+                                 sandbox: false,
+                                 script:
+                                         'return[\'Could not get Environment from VERS Param\']'
+                         ],
+                         script: [
+                                 classpath: [],
+                                 sandbox: true,
+                                 script:
+                              return ["redis","nacos"]
+                            }
+                            else {
+                              return ["redis","kafka","nacos","hbase","neo4j","es"]
+                            }
+                        '''
+                         ]
+                 ]
+                ],
+
+                [$class: 'CascadeChoiceParameter',
+                 choiceType: 'PT_CHECKBOX',
+                 description: '''[可选] 选择要操作的服务:\n- gateway/uc: 网关和用户\n -chain-monitor：交易监控''',
+                 filterLength: 1,
+                 filterable: false,
+                 name: 'PROJECT_ACTION',
+                 referencedParameters: 'VERS',
+                 script: [
+                         $class: 'GroovyScript',
+                         fallbackScript: [
+                                 classpath: [],
+                                 sandbox: false,
+                                 script:
+                                         'return[\'Could not get Environment from VERS Param\']'
+                         ],
+                         script: [
+                                 classpath: [],
+                                 sandbox: true,
+                                 script:
+                              return ["gateway","auth","uc","chain-monitor-toc","chainaegis-management","chainaegis-order","cloud-api-server","dimensionparse","intellidecision","intelligence-label","knowledge-graph","situation-awareness","check-server","crawl-center"]
+                            }
+                            else {
+                              return ["auth","uc","dimensionparse","intellidecision","intelligence-label","knowledge-graph","situation-awareness"]
+                            }
+                        '''
+                         ]
+                 ]
+                ],
+                choice(name: 'ACTION', choices: ['build', 'start', 'restart', 'restart_all', 'clear_all'], description: '选择执行的操作:\n- build: 获取最新代码编译后启动\n- start: 使用上一次编译的war包启动,忽略正在运行的容器\n- restart: 重启Tomcat容器\n- restart_all: 重启该Project下所有容器,出现组件连接问题时使用\n- clear_all: 删除该Project下的所有容器,包括组件及network,但默认不会删除ES数据\n注意：restart_all或clear_all会导致ignite数据丢失!'),
+                choice(name: 'YAMR_INSTALL', choices: ['false', 'true'], description:'[可选] 是否启用前端的yarm install,默认不需要，前端需要新增模块时才会true')
+
+        ])
+])
+
